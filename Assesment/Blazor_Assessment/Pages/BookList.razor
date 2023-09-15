@@ -1,0 +1,62 @@
+﻿@page "/"
+
+<div class="container">
+    <div class="columns is-multiline">
+        @*First Column*@
+        <div class="column">
+            <section class="section">
+                <AddBook InsertBook="AddNewBook"/>
+            </section>
+        </div>
+        @*Second Column*@
+        @foreach (var book in bookDtos)
+        {
+            <div class="column is-full-mobile is-half-tablet is-one-quarter-desktop">
+                <section class="section">
+                    <ShowBooks showBooksDto="book" RemoveBook="@BookToRemove" UpdateBook="@BookToUpdate"/>
+                </section>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    public List<BookDto> bookDtos = new()
+    {
+        new BookDto()
+        {
+            Id = Guid.NewGuid(),
+            Description = "Beautiful Novel",
+            Title = "The River Between",
+            Author = "Margaret Aoko"
+        }
+    };
+    public void AddNewBook(BookDto book)
+    {
+        this.bookDtos.Add(book);
+    }
+    public void BookToRemove(Guid id)
+    {
+        var Trashed = this.bookDtos.Find(x => x.Id == id);
+        if(Trashed != null)
+        {
+            bookDtos.Remove(Trashed);
+        }
+    }
+    // Update<ShowBooks showBooksDto="book" RemoveBook="@BookToRemove" UpdateBook="@BookToUpdate"/>
+    public void BookToUpdate(Guid id, BookDto newBook)
+    {
+    var bookToUpdate = bookDtos.Find(x => x.Id == newBook.Id);
+    if (bookToUpdate != null)
+    {
+        bookToUpdate.Title = newBook.Title;
+        bookToUpdate.Description = newBook.Description;
+        bookToUpdate.Author = newBook.Author;
+    }
+    else
+    {
+        // If the book doesn't exist in the list, add it.
+        bookDtos.Add(newBook);
+    }
+    }
+}

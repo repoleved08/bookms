@@ -1,0 +1,41 @@
+﻿<div class="container">
+    <div class="columns card mb-4">
+        <div class="column">
+            <div class="card-content">
+                <div class="media-content">
+                    <p class="title is-4">@showBooksDto.Title</p>
+                </div>
+                <div class="content">
+                    <p>@showBooksDto.Description</p>
+                    <br>
+                    <p><b>@showBooksDto.Author</b></p>
+                </div>
+            </div>
+        </div>
+        <div class="card-content">
+            <div class="buttons">
+                <button @onclick="UpdateBookDetails" class="button is-primary is-light">Update</button>
+                <button @onclick="DeleteBook" class="button is-danger is-light">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public BookDto showBooksDto { get; set; }
+    [Parameter]
+     public EventCallback<Guid> RemoveBook {get; set;}
+    public async Task DeleteBook()
+    {
+        await RemoveBook.InvokeAsync(showBooksDto.Id);
+    }
+    // Update
+    [Parameter]
+    public EventCallback<Guid> UpdateBook {get; set;}
+    
+    public async Task UpdateBookDetails()
+    {
+        await UpdateBook.InvokeAsync(showBooksDto.Id);
+    }
+
+}
