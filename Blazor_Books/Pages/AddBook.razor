@@ -1,0 +1,67 @@
+@page "/addbook"
+@page "/addbook/{Id}"
+
+@inject NavigationManager NavigationManager
+@inject BookService BookService
+
+<section class="section">
+    <div class="container">
+    <h2 class="subtitle">BOOK MS</h2>
+    <EditForm Model="@book" OnValidSubmit="HandleValidSubmit" class="is-centered" style="width: 500px;">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="field">
+            <label for="Title">Title</label>
+            <div class="control">
+                <InputText id="title" class="input" @bind-Value="book.Title" placeholder="Title" />
+            </div>
+        </div>
+        @*Description*@
+        <div class="field">
+            <div class="control">
+                <InputText id="description" class="input" @bind-Value="book.Description" placeholder="Description" />
+            </div>
+        </div>
+        @*Author*@
+        <div class="field">
+            <div class="control">
+                <InputText id="author" class="input" @bind-Value="book.Author" placeholder="Author" />
+            </div>
+        </div>
+
+        <button class="button is-primary" type="submit">Submit</button>
+    </EditForm>
+</div>
+</section>
+
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private BookDto book = new BookDto();
+
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrEmpty(Id))
+        {
+            var id = Guid.Parse(Id);
+            book = BookService.GetBooks().FirstOrDefault(b => b.Id == id);
+        }
+    }
+
+    private void HandleValidSubmit()
+    {
+        if (book.Id == Guid.Empty)
+        {
+            BookService.AddBook(book);
+        }
+        else
+        {
+            BookService.UpdateBook(book);
+        }
+
+        NavigationManager.NavigateTo("/");
+    }
+}
