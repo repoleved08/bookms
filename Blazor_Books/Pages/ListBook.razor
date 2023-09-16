@@ -1,0 +1,61 @@
+@page "/"
+
+@inject NavigationManager NavigationManager
+@inject BookService BookService
+
+<div class="field mt-6">
+    <div class="control">
+        <button class="button is-link is-light is-rounded" @onclick='() => NavigationManager.NavigateTo("/addbook")'>Add Book</button>
+    </div>
+</div>
+<h3 class="has-text-centered mt-3">List Books</h3>
+
+@foreach (var book in books)
+{
+
+    //start
+    <div class="container">
+    <div class="columns is-multiline card mb-4 mt-5">
+        <div class="column is-full-mobile is-half-tablet is-one-third-desktop">
+            <div class="card-content">
+                <div class="media-content">
+                    <p class="title is-4">@book.Title</p>
+                </div>
+                <div class="content">
+                    <p>@book.Description</p>
+                    <br>
+                    <p><b>@book.Author</b></p>
+                </div>
+                <div class="content">
+                    <div class="buttons">
+                        <button @onclick="() => EditBook(book.Id)" class="button is-primary is-light">Update</button>
+                        <button @onclick="() => DeleteBook(book.Id)" class="button is-danger is-light">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    //end
+}
+
+@code {
+    private List<BookDto> books = new List<BookDto>();
+
+    protected override void OnInitialized()
+    {
+        books = BookService.GetBooks();
+    }
+
+    private void EditBook(Guid id)
+    {
+        // Navigate to the AddBook page with the ID of the book to edit
+        NavigationManager.NavigateTo($"/addbook/{id}");
+    }
+
+    private void DeleteBook(Guid id)
+    {
+        BookService.DeleteBook(id);
+        books = BookService.GetBooks();
+    }
+}
